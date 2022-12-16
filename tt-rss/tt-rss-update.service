@@ -1,0 +1,19 @@
+[Unit]
+Description=Tiny Tiny RSS update daemon
+After=network.target mysql.service postgresql.service
+Requires=network.target
+
+[Service]
+User=tt-rss
+Group=tt-rss
+WorkingDirectory=/srv/www/htdocs/tt-rss
+Type=simple
+StandardOutput=null
+StandardError=syslog
+ExecStart=/usr/bin/php /srv/www/htdocs/tt-rss/update_daemon2.php
+PrivateTmp=true
+InaccessibleDirectories=/home /root /boot /opt /mnt /media
+ReadOnlyDirectories=/etc /usr
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,20 @@
+[Unit]
+Description=Tiny Tiny RSS daemon (The PHP FastCGI Process Manager)
+After=network.target mysql.service postgresql.service
+Before=apache2.service nginx.service lighttpd.service
+
+[Service]
+Type=notify
+ExecStart=/usr/sbin/php-fpm --nodaemonize --fpm-config /etc/tt-rss/php-fpm.conf
+ExecReload=/bin/kill -USR2 $MAINPID
+PrivateTmp=true
+ProtectSystem=full
+PrivateDevices=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_NETLINK AF_UNIX
+RestrictNamespaces=true
+[Install]
+WantedBy=multi-user.target
