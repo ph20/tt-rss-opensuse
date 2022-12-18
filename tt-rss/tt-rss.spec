@@ -74,7 +74,7 @@ find . ! -name '*.sh' ! -name '*-query' -type f -exec chmod 644 {} \;
 %install
 # configs
 %__install -p -d -m 0755 %{buildroot}%{_sysconfdir}/%{name}
-%__install -p -D -m 0644 -t %{buildroot}%{_sysconfdir}/%{name}/ %{SOURCE3}
+%__install -p -D -m 0644 -T %{SOURCE3} %{buildroot}%{_sysconfdir}/%{name}/php-fpm.conf
 
 # nginx vhost config
 %__install -p -D -m 0644 -t %{buildroot}%{_sysconfdir}/%{name}/ %{SOURCE2}
