@@ -5,12 +5,12 @@ Summary:        Web-based news feed (RSS/Atom) aggregator
 License:        GPL-2.0-or-later
 Group:          Productivity/Networking/Web/Frontends
 URL:            https://tt-rss.org/
-Source0:        tt-rss.tar.gz
+Source0:        %{name}.tar.gz
 Source1:        config.php
-Source2:        nginx.conf
-Source3:        php-fpm.conf
-Source4:        tt-rss.service
-Source5:        tt-rss-update.service
+Source2:        %{name}.nginx.conf
+Source3:        %{name}.php-fpm.conf
+Source4:        %{name}.service
+Source5:        %{name}-update.service
 #
 Requires:       php8
 Requires:       php8-fpm
