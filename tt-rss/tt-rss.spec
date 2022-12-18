@@ -89,9 +89,10 @@ find . ! -name '*.sh' ! -name '*-query' -type f -exec chmod 644 {} \;
 cp -dR . %{buildroot}%{htdocs_root}/%{name}/
 %__install -p -d -m 0755 %{buildroot}%{htdocs_root}/%{name}/cache/feed-icons
 %__install -p -D -m 0644 -t %{buildroot}%{htdocs_root}/%{name}/ %{SOURCE1}
-#%__chown %{app_uid}:%{app_uid} %{buildroot}%{htdocs_root}/%{name}/cache/{images,upload,export}
-#%__chown %{app_uid}:%{app_uid} %{buildroot}%{htdocs_root}/%{name}/feed-icons
-#%__chown %{app_uid}:%{app_uid} %{buildroot}%{htdocs_root}/%{name}/lock
+
+# move cache to /var dir
+%__install -p -d -m 0755 %{buildroot}%{_var}/cache
+%__cp -rv %{buildroot}%{htdocs_root}/%{name}/cache %{buildroot}%{_var}/cache/%{name}
 
 %files
 %license COPYING
@@ -100,9 +101,8 @@ cp -dR . %{buildroot}%{htdocs_root}/%{name}/
 %{htdocs_root}/%{name}
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}-update.service
-%attr(-, %{app_user}, %{app_group}) %{htdocs_root}/%{name}/cache/{images,upload,export,feed-icons,feeds}
-%attr(-, %{app_user}, %{app_group}) %{htdocs_root}/%{name}/feed-icons
 %attr(-, %{app_user}, %{app_group}) %{htdocs_root}/%{name}/lock
+%attr(-, %{app_user}, %{app_group}) %{_var}/cache/%{name}
 
 %pre
 %service_add_pre %{name}.service
@@ -137,5 +137,5 @@ fi
 %service_del_postun %{name}-update.service
 
 %changelog
-* Thu Dec 17 2022 Alexander Grynchuk <agrynchuk@gmail.com> - 22.12-0
+* Thu Dec 18 2022 Alexander Grynchuk <agrynchuk@gmail.com> - 22.12-0
 - Porting to OpenSUSE
