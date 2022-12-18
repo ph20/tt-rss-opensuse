@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
   # via 127.0.0.1 to disable public access
-  config.vm.network "forwarded_port", guest: 80, host: 8032, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 8032, host: 8032, host_ip: "127.0.0.1"
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -43,7 +43,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.synced_folder "tt-rss", "/home/vagrant/rpmbuild/SOURCES", owner: "vagrant", group: "vagrant"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -64,14 +64,16 @@ Vagrant.configure("2") do |config|
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
+    chown vagrant:vagrant /home/vagrant/rpmbuild
     zypper --non-interactive --quiet addrepo --refresh -p 90 https://download.opensuse.org/repositories/devel:/languages:/php/openSUSE_Leap_15.4/devel:languages:php.repo
     zypper --non-interactive --quiet addrepo --refresh -p 90 http://download.opensuse.org/repositories/server:/database:/postgresql/15.4/server:database:postgresql.repo
+    zypper --non-interactive --quiet addrepo --refresh -p 90 https://download.opensuse.org/repositories/openSUSE:Tools/15.4/openSUSE:Tools.repo
+
     zypper --gpg-auto-import-keys refresh
 
-     zypper --non-interactive install -t pattern devel_rpm_build
-     zypper --non-interactive install wget curl git
-     zypper --non-interactive install rpmlint
-     mkdir /home/vagrant/rpmbuild
-     ln -s /vagrant/tt-rss/ /home/vagrant/rpmbuild/SOURCES
+    zypper --non-interactive install -t pattern devel_rpm_build
+    zypper --non-interactive install wget curl git
+    zypper --non-interactive install rpmlint
+    zypper --non-interactive install openSUSE-release-tools
   SHELL
 end

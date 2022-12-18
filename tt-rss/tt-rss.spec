@@ -1,7 +1,7 @@
 Name:           tt-rss
 Version:        22.12
 Release:        0
-Summary:        Tiny Tiny RSS is a free and open source web-based news feed (RSS/Atom) reader and aggregator
+Summary:        Web-based news feed (RSS/Atom) aggregator
 License:        GPL-2.0-or-later
 Group:          Productivity/Networking/Web/Frontends
 URL:            https://tt-rss.org/
@@ -15,6 +15,7 @@ Source5:        tt-rss-update.service
 Requires:       php8
 Requires:       php8-fpm
 Requires:       php8-intl
+Requires:       php8-gd
 Requires:       php8-fileinfo
 Requires:       php8-mbstring
 Requires:       php8-pdo
@@ -22,7 +23,7 @@ Requires:       php8-pgsql
 Requires:       php8-cli
 Requires:       php8-posix
 Requires:       php8-pcntl
-Requires:       nginx
+Recommends:     nginx
 Recommends:     postgresql
 Recommends:     postgresql-server
 Recommends:     postgresql-contrib
@@ -35,6 +36,7 @@ BuildArch:      noarch
 %define         app_gid     932
 
 %description
+Tiny Tiny RSS is a free and open source web-based news feed (RSS/Atom) reader and aggregator
 Self-hosted: control your own data and protect your privacy instead of relying on third party services;
 Supports:
 	* feed aggregation / syndication,
@@ -54,9 +56,14 @@ Supports:
 %setup -q
 %autopatch -p1
 # clean up
-find . -name .gitignore -type f -prune -exec rm -f {} \;
-find . -name .empty -type f -prune -exec rm -f {} \;
-rm -Rf .eslintrc.js .editorconfig .vscode Jenkinsfile tests utils package.json phpstan.neon phpunit.xml jsconfig.json gulpfile.js composer.json composer.lock
+rm -Rf tests utils package.json phpstan.neon phpunit.xml jsconfig.json gulpfile.js composer.json composer.lock
+for dotdir in .github .vscode .phan .psalm; do
+  find . -name $dotdir -type d -prune -exec rm -r {} \;
+done
+for file in Jenkinsfile *.orig .gitkeep .gitattributes .empty .gitignore .travis.yml .weblate .jshintrc .eslintrc.js .eslintrc.json \
+ .php_cs.dist .scrutinizer.yml .editorconfig .phan .psalm .scrutinizer.yml .doctrine-project.json .phpstorm.meta.php .phpunit.result.cache; do
+  find . -type f -name $file -delete
+done
 
 # permissions
 find . -type d -exec chmod 755 {} \;
@@ -70,8 +77,7 @@ find . ! -name '*.sh' ! -name '*-query' -type f -exec chmod 644 {} \;
 %__install -p -D -m 0644 -t %{buildroot}%{_sysconfdir}/%{name}/ %{SOURCE3}
 
 # nginx vhost config
-%__install -p -d -m 0755 %{buildroot}%{_sysconfdir}/nginx/vhosts.d/
-%__install -p -D -m 0644 -T %{SOURCE2} %{buildroot}%{_sysconfdir}/nginx/vhosts.d/%{name}.conf
+%__install -p -D -m 0644 -t %{buildroot}%{_sysconfdir}/%{name}/ %{SOURCE2}
 
 # units
 %__install -p -d -m 0755 %{buildroot}%{_unitdir}
@@ -81,19 +87,22 @@ find . ! -name '*.sh' ! -name '*-query' -type f -exec chmod 644 {} \;
 # htdocs
 %__install -p -d -m 0755 %{buildroot}%{htdocs_root}/%{name}
 cp -dR . %{buildroot}%{htdocs_root}/%{name}/
+%__install -p -d -m 0755 %{buildroot}%{htdocs_root}/%{name}/cache/feed-icons
 %__install -p -D -m 0644 -t %{buildroot}%{htdocs_root}/%{name}/ %{SOURCE1}
-%__chmod 777 %{buildroot}%{htdocs_root}/%{name}/cache/{images,upload,export}
-%__chmod 777 %{buildroot}%{htdocs_root}/%{name}/feed-icons
-%__chmod 777 %{buildroot}%{htdocs_root}/%{name}/lock
+#%__chown %{app_uid}:%{app_uid} %{buildroot}%{htdocs_root}/%{name}/cache/{images,upload,export}
+#%__chown %{app_uid}:%{app_uid} %{buildroot}%{htdocs_root}/%{name}/feed-icons
+#%__chown %{app_uid}:%{app_uid} %{buildroot}%{htdocs_root}/%{name}/lock
 
 %files
 %license COPYING
 %doc README.md CONTRIBUTING.md
 %config(noreplace) %{_sysconfdir}/%{name}
-%config(noreplace) %{_sysconfdir}/nginx/vhosts.d/%{name}.conf
 %{htdocs_root}/%{name}
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}-update.service
+%attr(-, %{app_user}, %{app_group}) %{htdocs_root}/%{name}/cache/{images,upload,export,feed-icons,feeds}
+%attr(-, %{app_user}, %{app_group}) %{htdocs_root}/%{name}/feed-icons
+%attr(-, %{app_user}, %{app_group}) %{htdocs_root}/%{name}/lock
 
 %pre
 %service_add_pre %{name}.service
@@ -114,3 +123,19 @@ then
 else
     useradd  -r -u %{app_uid} -g %{app_group} -s /usr/sbin/nologin -c "Tiny Tiny RSS user" -d %{htdocs_root}/%{name} %{app_user} 2> /dev/null || :
 fi
+
+%post
+%service_add_post %{name}.service
+%service_add_post %{name}-update.service
+
+%preun
+%service_del_preun %{name}.service
+%service_del_preun %{name}-update.service
+
+%postun
+%service_del_postun %{name}.service
+%service_del_postun %{name}-update.service
+
+%changelog
+* Thu Dec 17 2022 Alexander Grynchuk <agrynchuk@gmail.com> - 22.12-0
+- Porting to OpenSUSE

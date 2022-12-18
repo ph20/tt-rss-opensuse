@@ -1,0 +1,11 @@
+# -*- python -*-
+from Config import setOption, addFilter
+setOption("StandardUsers", ('root', 'rkt', 'tt-rss'))
+setOption("StandardGroups", ('root', 'rkt', 'rkt-admin', 'tt-rss'))
+addFilter("tt-rss.noarch: W: files-duplicate")
+addFilter("tt-rss.noarch: W: package-with-huge-docs")
+addFilter("tt-rss.noarch: W: zero-length")
+addFilter("tt-rss.noarch: W: zero-length")
+addFilter("tt-rss.noarch: W: file-not-in-%lang")
+addFilter("tt-rss.noarch: W: non-executable-script")
+addFilter("tt-rss.noarch: W: suse-missing-rclink")
