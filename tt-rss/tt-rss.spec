@@ -1,6 +1,6 @@
 Name:           tt-rss
 Version:        22.12
-Release:        0
+Release:        1
 Summary:        Web-based news feed (RSS/Atom) aggregator
 License:        GPL-2.0-or-later
 Group:          Productivity/Networking/Web/Frontends
@@ -11,18 +11,19 @@ Source2:        %{name}.nginx.conf
 Source3:        %{name}.php-fpm.conf
 Source4:        %{name}.service
 Source5:        %{name}-update.service
+Source6:        %{name}.apparmor
 #
-Requires:       php8
-Requires:       php8-fpm
-Requires:       php8-intl
-Requires:       php8-gd
-Requires:       php8-fileinfo
-Requires:       php8-mbstring
-Requires:       php8-pdo
-Requires:       php8-pgsql
-Requires:       php8-cli
-Requires:       php8-posix
-Requires:       php8-pcntl
+Requires:       php
+Requires:       php-fpm
+Requires:       php-intl
+Requires:       php-gd
+Requires:       php-fileinfo
+Requires:       php-mbstring
+Requires:       php-pdo
+Requires:       php-pgsql
+Requires:       php-cli
+Requires:       php-posix
+Requires:       php-pcntl
 Recommends:     nginx
 Recommends:     postgresql
 Recommends:     postgresql-server
@@ -76,8 +77,14 @@ find . ! -name '*.sh' ! -name '*-query' -type f -exec chmod 644 {} \;
 %__install -p -d -m 0755 %{buildroot}%{_sysconfdir}/%{name}
 %__install -p -D -m 0644 -T %{SOURCE3} %{buildroot}%{_sysconfdir}/%{name}/php-fpm.conf
 
-# nginx vhost config
-%__install -p -D -m 0644 -t %{buildroot}%{_sysconfdir}/%{name}/ %{SOURCE2}
+# docs and examples
+%__install -p -d -m 0755 %{buildroot}%{_sysconfdir}/%{name}/examples
+
+# example nginx vhost config example
+%__install -p -D -m 0644 -t %{buildroot}%{_docdir}/%{name}/examples/ %{SOURCE2}
+# example of apparmor profile
+%__install -p -D -m 0644 -t %{buildroot}%{_docdir}/%{name}/examples/ %{SOURCE6}
+
 
 # units
 %__install -p -d -m 0755 %{buildroot}%{_unitdir}
@@ -97,6 +104,7 @@ cp -dR . %{buildroot}%{htdocs_root}/%{name}/
 %files
 %license COPYING
 %doc README.md CONTRIBUTING.md
+%{_docdir}/%{name}/examples
 %config(noreplace) %{_sysconfdir}/%{name}
 %{htdocs_root}/%{name}
 %{_unitdir}/%{name}.service
