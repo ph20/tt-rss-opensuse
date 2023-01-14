@@ -1,7 +1,7 @@
 <?php
-	    putenv('TTRSS_SELF_URL_PATH=http://localhost:8032/');
+        putenv('TTRSS_SELF_URL_PATH=http://localhost:8032/');
         define('_SKIP_SELF_URL_PATH_CHECKS', true);
-	    putenv('TTRSS_DB_TYPE=pgsql');
+        putenv('TTRSS_DB_TYPE=pgsql');
         putenv('TTRSS_DB_HOST=127.0.0.1');
         putenv('TTRSS_DB_NAME=tt_rss');
         putenv('TTRSS_DB_USER=ttrss');
