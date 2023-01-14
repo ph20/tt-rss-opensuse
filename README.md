@@ -19,7 +19,7 @@ rpmlint -f tt-rss-rpmlintrc /home/vagrant/rpmbuild/RPMS/noarch/tt-rss-22.12-0.no
 ## Testing package
 Install package
 ```bash
-sudo zypper in --allow-unsigned-rpm --recommends /home/vagrant/rpmbuild/RPMS/noarch/tt-rss-22.12-0.noarch.rpm
+sudo zypper in --allow-unsigned-rpm --recommends /home/vagrant/rpmbuild/RPMS/noarch/tt-rss-22.12-1.noarch.rpm
 ```
 Configure postgresql database
 ```bash
