@@ -1,0 +1,13 @@
+<services>
+    <service name="tar_scm">
+        <param name="scm">git</param>
+        <param name="url">https://git.tt-rss.org/fox/tt-rss.git</param>
+        <param name="filename">tt-rss</param>
+        <param name="version">22.12</param>
+        <param name="revision">c30b24d09f4096e612965af658540595262f6848</param>
+    </service>
+    <service name="recompress">
+        <param name="file">*tt-rss-*.tar</param>
+        <param name="compression">gz</param>
+    </service>
+</services>

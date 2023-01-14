@@ -1,11 +1,11 @@
 Name:           tt-rss
 Version:        22.12
-Release:        1
+Release:        2
 Summary:        Web-based news feed (RSS/Atom) aggregator
 License:        GPL-2.0-or-later
 Group:          Productivity/Networking/Web/Frontends
 URL:            https://tt-rss.org/
-Source0:        %{name}.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 Source1:        config.php
 Source2:        %{name}.nginx.conf
 Source3:        %{name}.php-fpm.conf
@@ -106,6 +106,7 @@ cp -dR . %{buildroot}%{htdocs_root}/%{name}/
 %doc README.md CONTRIBUTING.md
 %{_docdir}/%{name}/examples
 %config(noreplace) %{_sysconfdir}/%{name}
+%config(noreplace) %{htdocs_root}/%{name}/config.php
 %{htdocs_root}/%{name}
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}-update.service
