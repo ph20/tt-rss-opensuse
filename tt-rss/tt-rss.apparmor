@@ -1,0 +1,17 @@
+# vim:syntax=apparmor
+# put to /etc/apparmor.d/php-fpm.d/tt-rss
+# and then run   rcapparmor reload
+
+  abi <abi/3.0>,
+
+  # shared snippets for config files
+  /etc/tt-rss/php-fpm.conf r,
+  owner /var/cache/tt-rss/feed-icons/* rw,
+  owner /var/cache/tt-rss/images/* rw,
+  owner /var/cache/tt-rss/upload/* rw,
+  owner /var/cache/tt-rss/starred-images/* rw,
+  owner /var/cache/tt-rss/starred-images.status-files/* rw,
+  owner /var/log/fpm-php.tt-rss.log w,
+  owner /tmp/php* rwk,
+
+#
